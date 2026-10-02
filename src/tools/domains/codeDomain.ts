@@ -64,6 +64,7 @@ const EXECUTE_CODE_DESCRIPTION = [
   "Everything runs on Civil 3D's main thread inside one DocumentLock and ONE transaction (Tr). Do not commit Tr yourself.",
   "mode='write' (default): Tr is committed when the code succeeds and aborted on any exception or timeout. Requires approval: call civil3d_request_approval with toolName='civil3d_execute_code', action='write', and the identical parameters, then retry with approvalToken.",
   "mode='read': Tr is always aborted, so database edits made through Tr are discarded. No approval. Read mode is not a sandbox: file I/O, commands, or extra transactions started by the code are not rolled back.",
+  "Refused with CIVIL3D.HOST_BUSY while a modal dialog or a user command is active in Civil 3D (CMDACTIVE / editor not quiescent): close it and retry.",
   "Compile errors are returned in compileErrors[] with line/column (nothing runs). Runtime exceptions are returned in runtimeError. timeoutMs (default 60000, max 300000) is cooperative: Log() and CancellationToken observe it, and a script that overruns is never committed.",
   "",
   "Example (read) - list surfaces:",

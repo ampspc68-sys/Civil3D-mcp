@@ -139,6 +139,9 @@ public static class CodeExecutionCommands
         $"Parameter 'timeoutMs' must be between {MinTimeoutMs} and {MaxTimeoutMs}.");
     }
 
+    // Refuse instead of queueing behind a modal dialog or user command.
+    CivilExecution.EnsureHostIdle("execute_code");
+
     var stopwatch = Stopwatch.StartNew();
     var codeHash = CodeScriptEngine.HashCode(code)[..12];
     var requestToken = PluginRuntime.GetCurrentRequestCancellationToken();

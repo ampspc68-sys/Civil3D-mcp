@@ -48,8 +48,8 @@ This is the **MCP server** (TypeScript). You also need the **Civil 3D .NET plugi
   drawing `open`/`close`/`list_open`/`activate`, `civil3d_capture_view` (PNG of the
   model/layout view), and `civil3d_list_installations` / `civil3d_launch`. See
   [Live session tools](#live-session-tools-revit-connector-parity).
-- The default MCP surface is compact: 38 public tools cover every domain. The
-  complete 212-tool surface can be enabled when a client needs specialized aliases.
+- The default MCP surface is compact: 39 public tools cover every domain. The
+  complete 213-tool surface can be enabled when a client needs specialized aliases.
 - Native workflow handlers cover major QC, grading, hydrology, plan-production,
   and data-shortcut flows instead of relying only on client-side orchestration.
 - Claude Code can be registered with a single project-scoped command that
@@ -160,7 +160,7 @@ For a source-based or Claude Code installation:
 
 ## Features
 
-- **Compact default MCP surface** with 38 public tools; all 212 registered
+- **Compact default MCP surface** with 39 public tools; all 213 registered
   routes remain internally callable or available as opt-in aliases
 - **Local Autodesk help in chat** — version-matched topics, screenshots,
   diagrams, citations, and playable Civil 3D tutorial videos
@@ -202,9 +202,9 @@ names for actions already available through a canonical domain tool.
 
 | Surface | Exposed tools | How to call an operation |
 |---|---:|---|
-| Default MCP client | 38 | Call a canonical domain tool and provide `action`. |
-| MCP client with aliases enabled | 212 | Use either canonical tools or specialized alias names. |
-| HTTP `/execute` and orchestration | 212 | All registered routes remain internally callable in either mode. |
+| Default MCP client | 39 | Call a canonical domain tool and provide `action`. |
+| MCP client with aliases enabled | 213 | Use either canonical tools or specialized alias names. |
+| HTTP `/execute` and orchestration | 213 | All registered routes remain internally callable in either mode. |
 
 For example, these calls are equivalent:
 
@@ -305,6 +305,25 @@ the full AutoCAD and Civil 3D .NET API.
 For `mode: "write"`, first call `civil3d_request_approval` with
 `toolName: "civil3d_execute_code"`, `action: "write"`, and the identical
 parameters; the token is bound to the exact code.
+
+### Stuck operations and `civil3d_reset_queue`
+
+Plugin work runs one operation at a time on Civil 3D's main thread. While a
+modal dialog is open or a user command is running, Civil 3D does not start
+queued MCP work. To keep one blocked call from freezing the queue:
+
+- An operation Civil 3D has not started yet is **abandoned** when the caller
+  disconnects (including the MCP server's own command timeout), when
+  `civil3d_reset_queue` is called, or after `CIVIL3D_HOST_START_TIMEOUT_MS`
+  (default 90000; `0` disables) with `CIVIL3D.HOST_BUSY`. An abandoned
+  operation never runs later.
+- `civil3d_health` lists `hostOperations` (`queued`, `waiting_for_host`,
+  `running`, with `ageMs`).
+- `civil3d_reset_queue` abandons everything not yet started, needs no
+  approval, and reports work already executing on the main thread (which
+  cannot be interrupted) in `stillRunning`.
+- `civil3d_execute_code` refuses to start (`CIVIL3D.HOST_BUSY`) while a modal
+  dialog or user command is active.
 
 ### `civil3d_drawing` document actions
 
@@ -529,21 +548,22 @@ Restart your client. When you see the **hammer icon**, the MCP connection is liv
 
 ---
 
-## Tool Reference (210 catalog entries)
+## Tool Reference (211 catalog entries)
 
 The generated, release-checked inventory is [docs/tools.generated.md](./docs/tools.generated.md).
 It includes both canonical tools and specialized aliases. Canonical rows list
 one or more operations; alias rows show an em dash in the **Operations** column.
 
 <details>
-<summary><strong>Drawing Info & Context (11 tools)</strong></summary>
+<summary><strong>Drawing Info & Context (12 tools)</strong></summary>
 
 | Tool | Description |
 |------|-------------|
 | `get_drawing_info` | Retrieves basic information about the active Civil 3D drawing |
 | `list_civil_object_types` | Lists major Civil 3D object types present in the current drawing |
 | `get_selected_civil_objects_info` | Gets properties of currently selected Civil 3D objects |
-| `civil3d_health` | Reports Civil 3D connection and plugin status |
+| `civil3d_health` | Reports Civil 3D connection and plugin status, including queued host operations |
+| `civil3d_reset_queue` | Abandons queued operations Civil 3D has not started (e.g. blocked by a modal dialog) |
 | `civil3d_drawing` | Manages drawing state, document info, save/undo, and open/close/list_open/activate |
 | `civil3d_execute_code` | Runs C# (Roslyn) inside the live Civil 3D session with the full AutoCAD + Civil 3D API |
 | `civil3d_capture_view` | Saves the model or layout view as a PNG at a requested size |
@@ -1002,7 +1022,7 @@ The Node MCP server reads the following variables at startup. All are optional; 
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `CIVIL3D_ENABLE_TOOL_ALIASES` | `false` | Set to `true` before the MCP server starts to expose all specialized aliases instead of the compact 38-tool surface. |
+| `CIVIL3D_ENABLE_TOOL_ALIASES` | `false` | Set to `true` before the MCP server starts to expose all specialized aliases instead of the compact 39-tool surface. |
 | `CIVIL3D_APPROVAL_MODE` | enforced | Set to `disabled` only in an isolated disposable test environment; production should retain parameter-bound approvals. |
 
 ### Local Autodesk help search
@@ -1089,7 +1109,7 @@ failure cannot remain silent.
 | `GET` | `/health/plugin` | Native plugin health and drawing telemetry. |
 | `GET` | `/health/queue` | Host queue and background-job health. |
 | `GET` | `/health/version` | Package, MCP SDK, and Node dependency versions without probing Civil 3D. |
-| `GET` | `/tools` | Full internal route catalog (212 names), independent of compact MCP exposure. |
+| `GET` | `/tools` | Full internal route catalog (213 names), independent of compact MCP exposure. |
 | `POST` | `/execute` | `{ "tool": "<name>", "parameters": { ... } }` — invokes any registered tool or legacy alias. |
 
 ### Example: enable the shared-secret token
@@ -1163,7 +1183,7 @@ use the default loopback endpoint.
 - Use the corresponding list tool first (e.g. `civil3d_alignment` → `list` action)
 
 **"I cannot see a specialized alias in my MCP client"**
-- This is expected with the recommended compact 38-tool surface
+- This is expected with the recommended compact 39-tool surface
 - Call the canonical domain tool with its `action`, or set `CIVIL3D_ENABLE_TOOL_ALIASES=true` in the MCP server configuration
 - Restart the MCP client connection after changing the environment; changing an unrelated terminal does not update an already-running client-managed server
 - Use `civil3d://catalog/tools` or [tools.generated.md](./docs/tools.generated.md) to map aliases to canonical actions

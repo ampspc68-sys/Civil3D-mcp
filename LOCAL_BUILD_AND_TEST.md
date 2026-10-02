@@ -55,6 +55,7 @@ Optional, no Civil 3D needed:
 
 ```powershell
 npm run test:code-engine      # Roslyn engine: compile errors, runtime errors, cache, caps
+npm run test:host-queue       # stuck-operation recovery: abandon, reset, start timeout, busy check
 npm run test:p2-boundaries    # FileBoundary incl. WriteAllBytesAtomic
 ```
 
@@ -125,6 +126,14 @@ same `toolName`, `action`, and `parameters`, then repeat the call with
 | 6 | Draw a line, then `civil3d_capture_view {"outputPath":"<root>\\smoke.png","view":"extents","width":1600,"height":900}` (approved) | A PNG exists. Check its size with `Add-Type -AssemblyName System.Drawing; $i=[System.Drawing.Image]::FromFile("<root>\smoke.png"); "$($i.Width)x$($i.Height)"; $i.Dispose()`, which should print `1600x900`. The response reports `method`. The on-screen view is unchanged afterwards. Try `background:"white"` and a path outside the roots (expect `CIVIL3D.PATH_NOT_ALLOWED`). |
 | 7 | `civil3d_list_installations {}` | Lists `R25.1` / `Autodesk Civil 3D 2026` with `acadExe` under `C:\Program Files\Autodesk\AutoCAD 2026\`. |
 | 8 | `civil3d_launch {"profile":"metric"}` while Civil 3D is running | `launched: false`, `alreadyRunning: true`, `pluginConnected: true`, and no second `acad.exe` in Task Manager. |
+
+**Stuck-operation recovery:**
+
+| # | Steps | Expected |
+|---|---|---|
+| 9 | Open a modal dialog in Civil 3D (for example Drawing Settings), then call `civil3d_execute_code {"mode":"read","code":"return 1;"}` | Fails immediately with `CIVIL3D.HOST_BUSY` ("a modal dialog is open; CMDACTIVE=8"). |
+| 10 | With the dialog still open, call `civil3d_profile` (or any read). In another client, call `civil3d_health`, then `civil3d_reset_queue` | `hostOperations` shows the call as `waiting_for_host`. Reset returns `abandoned >= 1`, and the blocked call ends with `CIVIL3D.CANCELLED`. Without the reset, it ends with `CIVIL3D.HOST_BUSY` after `CIVIL3D_HOST_START_TIMEOUT_MS` (90 s). |
+| 11 | Close the dialog and call `civil3d_health`, then any read | `hostOperations` is empty and `operationInProgress` is false. The read succeeds, and the abandoned call does **not** run late. |
 
 Optional: close Civil 3D and run
 `civil3d_launch {"profile":"metric","fileRoots":["C:\\Users\\<you>\\Documents\\c3d-mcp-smoke"]}`.
