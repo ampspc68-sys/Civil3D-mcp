@@ -438,4 +438,27 @@ internal static class Civil3DCompatibility
 
     return files;
   }
+
+  /// <summary>
+  /// Reads a property from a late-bound COM automation object (for example the
+  /// AcadDocument returned by Document.GetAcadDocument()).
+  /// </summary>
+  public static bool TryGetComProperty(object? comObject, string propertyName, out object? value)
+  {
+    value = null;
+    if (comObject == null)
+    {
+      return false;
+    }
+
+    try
+    {
+      value = comObject.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, comObject, null);
+      return true;
+    }
+    catch
+    {
+      return false;
+    }
+  }
 }

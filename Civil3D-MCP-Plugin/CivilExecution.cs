@@ -68,6 +68,48 @@ public static class CivilExecution
     });
   }
 
+  /// <summary>
+  /// Runs an action on the AutoCAD main thread in application (session) context,
+  /// outside any document lock or command. Document open, close, and activation
+  /// must run here. The action is dispatched from the next Application.Idle event,
+  /// which also works when no drawing is open.
+  /// </summary>
+  public static Task<T> ExecuteInApplicationContextAsync<T>(Func<T> action)
+  {
+    return ExecuteSerializedAsync(async () =>
+    {
+      var cancellationToken = PluginRuntime.GetCurrentRequestCancellationToken();
+      var completion = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+      void OnIdle(object? sender, EventArgs e)
+      {
+        App.Idle -= OnIdle;
+        if (cancellationToken.IsCancellationRequested)
+        {
+          completion.TrySetCanceled(cancellationToken);
+          return;
+        }
+
+        try
+        {
+          completion.TrySetResult(action());
+        }
+        catch (Exception ex)
+        {
+          completion.TrySetException(ex);
+        }
+      }
+
+      App.Idle += OnIdle;
+      using var registration = cancellationToken.Register(() =>
+      {
+        App.Idle -= OnIdle;
+        completion.TrySetCanceled(cancellationToken);
+      });
+      return await completion.Task;
+    });
+  }
+
   public static async Task<T> ExecuteInCommandContextAsync<T>(Func<Task<T>> action)
   {
     return await ExecuteSerializedAsync(async () =>
