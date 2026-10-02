@@ -106,6 +106,48 @@ Redoes the last undone operation.
 | action    | `"redo"` | yes      | —                                        |
 | steps     | number     | no       | Number of redo steps. Default: 1. Max: 10 |
 
+#### `open`
+
+Opens a `.dwg` or `.dwt` from the configured import roots (`CIVIL3D_IMPORT_ROOTS` / `CIVIL3D_FILE_ROOTS`). Runs in application context, outside any document lock. If the file is already open, the existing document is returned (and activated when `activate` is true). Requires approval.
+
+| Parameter | Type       | Required | Description                                  |
+| --------- | ---------- | -------- | -------------------------------------------- |
+| action    | `"open"`   | yes      | —                                            |
+| path      | string     | yes      | Absolute path to a `.dwg` or `.dwt` file      |
+| readOnly  | boolean    | no       | Open read-only. Default: false               |
+| activate  | boolean    | no       | Make it the active document. Default: true   |
+
+**Response data:** `{ name, path, isActive, isModified, isReadOnly, alreadyOpen }`
+
+#### `close`
+
+Closes a drawing. Unsaved changes are never discarded unless `save: false` is passed explicitly; when the drawing is modified (or its state cannot be read) and `save` is omitted, the call fails with `CIVIL3D.CONFLICT`. Requires approval.
+
+| Parameter | Type       | Required | Description                                                     |
+| --------- | ---------- | -------- | --------------------------------------------------------------- |
+| action    | `"close"`  | yes      | —                                                               |
+| name      | string     | no       | File name or full path from `list_open`. Default: active drawing |
+| save      | boolean    | no       | `true` saves before closing, `false` discards changes           |
+| saveAs    | string     | no       | Save a copy here (export roots, `.dwg`) and close; implies save |
+| overwrite | boolean    | no       | Allow `saveAs` to replace an existing file. Default: false      |
+
+**Response data:** `{ closed, name, path, saved, savedTo, discardedChanges }`
+
+#### `list_open`
+
+Lists open documents. No approval required.
+
+**Response data:** `[{ name, path, isActive, isModified, isReadOnly }]` (`path` is null for never-saved drawings; `isModified` is null when the state cannot be read)
+
+#### `activate`
+
+Switches the active document. No approval required.
+
+| Parameter | Type         | Required | Description                               |
+| --------- | ------------ | -------- | ----------------------------------------- |
+| action    | `"activate"` | yes      | —                                         |
+| name      | string       | yes      | File name or full path from `list_open`    |
+
 #### `settings`
 
 Returns drawing-level ambient settings.
@@ -2985,7 +3027,7 @@ Generates parcel report with coordinate and unit settings.
 
 | #  | Tool Name                     | Actions                                                                                 | Category              |
 | -- | ----------------------------- | --------------------------------------------------------------------------------------- | --------------------- |
-| 1  | `civil3d_drawing`           | info, save, undo, redo, settings                                                        | System               |
+| 1  | `civil3d_drawing`           | info, save, undo, redo, settings, open, close, list_open, activate                      | System               |
 | 2  | `civil3d_health`            | (single action)                                                                         | System               |
 | 3  | `civil3d_job`               | status, cancel                                                                          | System               |
 | 4  | `civil3d_coordinate_system` | info, transform                                                                         | System               |

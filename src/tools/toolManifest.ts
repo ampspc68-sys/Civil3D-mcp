@@ -34,9 +34,12 @@ import { GEOMETRY_DOMAIN_DEFINITION } from "./domains/geometryDomain.js";
 import { DRAWING_RUNTIME_DOMAIN_DEFINITION } from "./domains/drawingRuntimeDomain.js";
 import { COORDINATE_SYSTEM_DOMAIN_DEFINITION } from "./domains/coordinateSystemDomain.js";
 import { JOB_DOMAIN_DEFINITION } from "./domains/jobDomain.js";
-import { PLUGIN_DOMAIN_DEFINITION } from "./domains/pluginDomain.js";
+import { PLUGIN_DOMAIN_DEFINITION, PLUGIN_RESET_DOMAIN_DEFINITION } from "./domains/pluginDomain.js";
 import { DOCS_DOMAIN_DEFINITION } from "./domains/docsDomain.js";
 import { WORKFLOW_DOMAIN_DEFINITION } from "./domains/workflowDomain.js";
+import { CODE_DOMAIN_DEFINITION } from "./domains/codeDomain.js";
+import { CAPTURE_DOMAIN_DEFINITION } from "./domains/captureDomain.js";
+import { HOST_INSTALLATIONS_DOMAIN_DEFINITION, HOST_LAUNCH_DOMAIN_DEFINITION } from "./domains/hostDomain.js";
 import type { ToolCatalogEntry } from "./toolMetadata.js";
 
 export const MIGRATED_DOMAIN_DEFINITIONS = [
@@ -69,6 +72,11 @@ export const MIGRATED_DOMAIN_DEFINITIONS = [
   JOB_DOMAIN_DEFINITION,
   WORKFLOW_DOMAIN_DEFINITION,
   PLUGIN_DOMAIN_DEFINITION,
+  PLUGIN_RESET_DOMAIN_DEFINITION,
+  CODE_DOMAIN_DEFINITION,
+  CAPTURE_DOMAIN_DEFINITION,
+  HOST_INSTALLATIONS_DOMAIN_DEFINITION,
+  HOST_LAUNCH_DOMAIN_DEFINITION,
   DOCS_DOMAIN_DEFINITION,
 ];
 

@@ -37,6 +37,8 @@ public static class DrawingCommands
       ["logFilePath"] = PluginLog.LogFilePath,
       ["fileLoggingHealthy"] = PluginLog.IsFileLoggingHealthy,
       ["fileLoggingError"] = PluginLog.LastFileError,
+      ["hostStartTimeoutMs"] = CivilExecution.HostStartTimeoutMs,
+      ["hostOperations"] = CivilExecution.GetHostOperations().Select(DescribeHostOperation).ToList(),
       ["jobs"] = new Dictionary<string, object?>
       {
         ["total"] = jobs.Total,
@@ -51,6 +53,34 @@ public static class DrawingCommands
 
     return Task.FromResult<object?>(response);
   }
+
+  /// <summary>
+  /// Recovery for a stuck host queue: abandons every operation Civil 3D has not
+  /// started yet. Never queued behind the host gate, so it works while stuck.
+  /// </summary>
+  public static Task<object?> ResetHostQueueAsync()
+  {
+    var reset = CivilExecution.ResetHostQueue();
+    var stillRunning = reset.StillRunning.Select(DescribeHostOperation).ToList();
+    object response = new Dictionary<string, object?>
+    {
+      ["abandoned"] = reset.Abandoned,
+      ["stillRunning"] = stillRunning,
+      ["message"] = stillRunning.Count == 0
+        ? $"Abandoned {reset.Abandoned} pending operation(s). The queue is free."
+        : $"Abandoned {reset.Abandoned} pending operation(s). {stillRunning.Count} operation(s) are executing on Civil 3D's main thread and cannot be interrupted; they release the queue when they finish.",
+    };
+    return Task.FromResult<object?>(response);
+  }
+
+  private static Dictionary<string, object?> DescribeHostOperation(HostOperationInfo operation) => new()
+  {
+    ["id"] = operation.Id,
+    ["operation"] = operation.Operation,
+    ["requestId"] = operation.RequestId,
+    ["state"] = operation.State,
+    ["ageMs"] = operation.AgeMs,
+  };
 
   public static Task<object?> GetDrawingInfoAsync()
   {

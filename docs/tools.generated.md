@@ -2,8 +2,8 @@
 
 Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 
-- Catalog entries: 206
-- Domains: 29
+- Catalog entries: 211
+- Domains: 31
 
 | Tool | Domain | Operations | Plugin methods | Safe retry |
 |---|---|---|---|---|
@@ -28,6 +28,7 @@ Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 | `civil3d_assembly_create` | assembly | — | createAssembly | no |
 | `civil3d_assembly_edit` | assembly | — | editAssembly | no |
 | `civil3d_subassembly_create` | assembly | — | createSubassembly | no |
+| `civil3d_execute_code` | code | write, read | executeCode | no |
 | `civil3d_coordinate_system` | coordinate_system | info, transform | getCoordinateSystemInfo, transformCoordinates | yes |
 | `civil3d_corridor` | corridor | list, get, rebuild, get_surfaces, get_feature_lines, compute_volumes, summary, target_mapping_get, target_mapping_set, region_add, region_delete | listCorridors, getCorridor, rebuildCorridor, getCorridorSurfaces, getCorridorFeatureLines, computeCorridorVolumes, getCorridorTargetMappings, setCorridorTargetMappings, addCorridorRegion, deleteCorridorRegion | no |
 | `civil3d_corridor_region_add` | corridor | — | addCorridorRegion | no |
@@ -44,7 +45,8 @@ Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 | `civil3d_docs` | docs | list_tool_capabilities, orchestrate | — | yes |
 | `civil3d_orchestrate` | docs | — | — | yes |
 | `list_tool_capabilities` | docs | — | — | yes |
-| `civil3d_drawing` | drawing | info, new, save, undo, redo, settings, selected_objects_info, list_object_types | getDrawingInfo, newDrawing, saveDrawing, undoDrawing, redoDrawing, getDrawingSettings, getSelectedCivilObjectsInfo, listCivilObjectTypes | no |
+| `civil3d_capture_view` | drawing | — | captureView | no |
+| `civil3d_drawing` | drawing | info, new, save, undo, redo, settings, selected_objects_info, list_object_types, open, close, list_open, activate | getDrawingInfo, newDrawing, saveDrawing, undoDrawing, redoDrawing, getDrawingSettings, getSelectedCivilObjectsInfo, listCivilObjectTypes, openDrawing, closeDrawing, listOpenDrawings, activateDrawing | no |
 | `get_drawing_info` | drawing | — | getDrawingInfo | yes |
 | `get_selected_civil_objects_info` | drawing | — | getSelectedCivilObjectsInfo | yes |
 | `list_civil_object_types` | drawing | — | listCivilObjectTypes | yes |
@@ -73,6 +75,8 @@ Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 | `civil3d_grading_group_volume` | grading | — | getGradingGroupVolume | yes |
 | `civil3d_grading_list` | grading | — | listGradings | yes |
 | `civil3d_help` | help | search, search_videos, get_topic, status, reindex | — | yes |
+| `civil3d_launch` | host | — | — | yes |
+| `civil3d_list_installations` | host | — | — | yes |
 | `civil3d_catchment` | hydrology | list_catchment_groups, get_catchment_group, list_catchments, get_catchment_properties, set_catchment_properties, copy_catchment_to_group, get_catchment_flow_path, get_catchment_boundary | listCatchmentGroups, getCatchmentGroup, listCatchments, getCatchmentProperties, setCatchmentProperties, copyCatchmentToGroup, getCatchmentFlowPath, getCatchmentBoundary | no |
 | `civil3d_hydrology` | hydrology | list_capabilities, trace_flow_path, find_low_point, estimate_runoff, delineate_watershed, calculate_catchment_area, list_catchment_groups, get_catchment_group, list_catchments, get_catchment_properties, set_catchment_properties, copy_catchment_to_group, get_catchment_flow_path, get_catchment_boundary, list_tc_methods, calculate_tc, generate_hydrograph, list_ssa_capabilities, export_stm, import_stm, open_storm_sanitary_analysis, watershed_runoff_workflow, runoff_detention_workflow, runoff_pipe_workflow | listHydrologyCapabilities, traceHydrologyFlowPath, findHydrologyLowPoint, estimateHydrologyRunoff, delineateWatershed, calculateCatchmentArea, listCatchmentGroups, getCatchmentGroup, listCatchments, getCatchmentProperties, setCatchmentProperties, copyCatchmentToGroup, getCatchmentFlowPath, getCatchmentBoundary, listTcMethods, calculateTimeOfConcentration, generateHydrograph, listSsaCapabilities, exportStm, importStm, openStormSanitaryAnalysis, watershedRunoffWorkflow, runoffDetentionWorkflow, runoffPipeWorkflow | no |
 | `civil3d_hydrology_runoff_detention_workflow` | hydrology | — | runoffDetentionWorkflow | yes |
@@ -123,6 +127,7 @@ Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 | `civil3d_sheet_view_create` | plan_production | — | createSheetView | no |
 | `civil3d_sheet_view_set_scale` | plan_production | — | setSheetViewScale | no |
 | `civil3d_health` | plugin | — | getCivil3DHealth | yes |
+| `civil3d_reset_queue` | plugin | — | resetHostQueue | yes |
 | `civil3d_point` | point | list, get, create, list_groups, import, delete, group_create, group_update, group_delete, export, transform | listCogoPoints, getCogoPoint, createCogoPoints, listPointGroups, importCogoPoints, deleteCogoPoints, createPointGroup, updatePointGroup, deletePointGroup, exportCogoPoints, transformCogoPoints | no |
 | `civil3d_point_export` | point | — | exportCogoPoints | yes |
 | `civil3d_point_group_create` | point | — | createPointGroup | no |

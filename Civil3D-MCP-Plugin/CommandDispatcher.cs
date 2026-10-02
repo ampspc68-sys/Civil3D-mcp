@@ -9,6 +9,7 @@ public static class CommandDispatcher
   return method switch
   {
       "getCivil3DHealth" => DrawingCommands.GetCivil3DHealthAsync(),
+      "resetHostQueue" => DrawingCommands.ResetHostQueueAsync(),
       "getDrawingInfo" => DrawingCommands.GetDrawingInfoAsync(),
       "getProjectContext" => DrawingCommands.GetProjectContextAsync(parameters),
       "getDrawingSettings" => DrawingCommands.GetDrawingSettingsAsync(),
@@ -26,6 +27,10 @@ public static class CommandDispatcher
       "qcFixAndVerifyWorkflow" => WorkflowCommands.QcFixAndVerifyWorkflowAsync(parameters),
       "newDrawing" => DrawingCommands.NewDrawingAsync(parameters),
       "saveDrawing" => DrawingCommands.SaveDrawingAsync(parameters),
+      "openDrawing" => DocumentLifecycleCommands.OpenDrawingAsync(parameters),
+      "closeDrawing" => DocumentLifecycleCommands.CloseDrawingAsync(parameters),
+      "listOpenDrawings" => DocumentLifecycleCommands.ListOpenDrawingsAsync(),
+      "activateDrawing" => DocumentLifecycleCommands.ActivateDrawingAsync(parameters),
       "undoDrawing" => DrawingCommands.UndoDrawingAsync(parameters),
       "redoDrawing" => DrawingCommands.RedoDrawingAsync(parameters),
       "createPolyline" => AcadCommands.CreatePolylineAsync(parameters),
@@ -33,6 +38,8 @@ public static class CommandDispatcher
       "create3dPolyline" => AcadCommands.Create3dPolylineAsync(parameters),
       "createMText" => AcadCommands.CreateMTextAsync(parameters),
       "createLineSegment" => AcadCommands.CreateLineSegmentAsync(parameters),
+      "executeCode" => CodeExecutionCommands.ExecuteCodeAsync(parameters),
+      "captureView" => ViewCaptureCommands.CaptureViewAsync(parameters),
       "listCivilObjectTypes" => DrawingCommands.ListCivilObjectTypesAsync(),
       "getSelectedCivilObjectsInfo" => DrawingCommands.GetSelectedCivilObjectsInfoAsync(parameters),
       "getJobStatus" => Task.FromResult<object?>(JobCommands.GetJobStatus(parameters)),

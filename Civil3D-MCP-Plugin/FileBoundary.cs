@@ -56,6 +56,24 @@ internal static class FileBoundary
     bool overwrite,
     params string[] allowedExtensions)
   {
+    return WriteAtomic(rawPath, overwrite, allowedExtensions, tempPath => File.WriteAllText(tempPath, content, encoding));
+  }
+
+  public static string WriteAllBytesAtomic(
+    string rawPath,
+    byte[] content,
+    bool overwrite,
+    params string[] allowedExtensions)
+  {
+    return WriteAtomic(rawPath, overwrite, allowedExtensions, tempPath => File.WriteAllBytes(tempPath, content));
+  }
+
+  private static string WriteAtomic(
+    string rawPath,
+    bool overwrite,
+    string[] allowedExtensions,
+    Action<string> writeTempFile)
+  {
     var path = ResolveExportPath(rawPath, overwrite, allowedExtensions);
     var directory = Path.GetDirectoryName(path)
       ?? throw new JsonRpcDispatchException("CIVIL3D.INVALID_INPUT", "Output path must include a directory.");
@@ -64,7 +82,7 @@ internal static class FileBoundary
     var tempPath = Path.Combine(directory, $".{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
     try
     {
-      File.WriteAllText(tempPath, content, encoding);
+      writeTempFile(tempPath);
       File.Move(tempPath, path, overwrite);
       return path;
     }

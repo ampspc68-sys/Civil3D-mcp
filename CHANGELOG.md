@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased — Revit-connector parity
+
+- Added `civil3d_execute_code`: Roslyn C# scripting inside the live Civil 3D
+  session (single DocumentLock + Transaction; write commits on success and
+  requires approval, read always aborts). Compile and runtime errors are
+  returned, never thrown into Civil 3D.
+- Added `civil3d_drawing` actions `open`, `close`, `list_open`, and `activate`.
+  Close never discards unsaved changes without an explicit `save: false`.
+- Added `civil3d_capture_view`: PNG of the model/layout view at a requested
+  size through FileBoundary export roots (new `WriteAllBytesAtomic`).
+- Added server-side `civil3d_list_installations` and `civil3d_launch`
+  (Windows registry discovery, detached launch with child-only
+  `CIVIL3D_FILE_ROOTS`, health polling, no second instance).
+- Added `LOCAL_BUILD_AND_TEST.md` and the `CodeScriptEngineHarness` check.
+
 ## v1.2.1 — 2026-07-14
 
 ### Production readiness
