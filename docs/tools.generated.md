@@ -2,7 +2,7 @@
 
 Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 
-- Catalog entries: 207
+- Catalog entries: 208
 - Domains: 30
 
 | Tool | Domain | Operations | Plugin methods | Safe retry |
@@ -45,6 +45,7 @@ Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 | `civil3d_docs` | docs | list_tool_capabilities, orchestrate | — | yes |
 | `civil3d_orchestrate` | docs | — | — | yes |
 | `list_tool_capabilities` | docs | — | — | yes |
+| `civil3d_capture_view` | drawing | — | captureView | no |
 | `civil3d_drawing` | drawing | info, new, save, undo, redo, settings, selected_objects_info, list_object_types, open, close, list_open, activate | getDrawingInfo, newDrawing, saveDrawing, undoDrawing, redoDrawing, getDrawingSettings, getSelectedCivilObjectsInfo, listCivilObjectTypes, openDrawing, closeDrawing, listOpenDrawings, activateDrawing | no |
 | `get_drawing_info` | drawing | — | getDrawingInfo | yes |
 | `get_selected_civil_objects_info` | drawing | — | getSelectedCivilObjectsInfo | yes |

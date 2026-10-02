@@ -37,6 +37,23 @@ try
   FileBoundary.WriteAllTextAtomic(nestedOutput, "replacement", Encoding.UTF8, overwrite: true, ".csv");
   Assert(File.ReadAllText(writtenPath, Encoding.UTF8) == "replacement", "Explicit overwrite did not replace content.");
 
+  var imagePath = Path.Combine(allowedRoot, "captures", "view.png");
+  var pngBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+  var writtenImage = FileBoundary.WriteAllBytesAtomic(imagePath, pngBytes, overwrite: false, ".png");
+  Assert(File.ReadAllBytes(writtenImage).SequenceEqual(pngBytes), "Atomic binary write content mismatch.");
+  Assert(!Directory.EnumerateFiles(Path.GetDirectoryName(writtenImage)!, ".*.tmp").Any(), "Atomic binary write left a temp file.");
+  ExpectCode(
+    "CIVIL3D.CONFLICT",
+    () => FileBoundary.WriteAllBytesAtomic(imagePath, pngBytes, overwrite: false, ".png"));
+  ExpectCode(
+    "CIVIL3D.FILE_TYPE_NOT_ALLOWED",
+    () => FileBoundary.WriteAllBytesAtomic(Path.Combine(allowedRoot, "view.bmp"), pngBytes, overwrite: false, ".png"));
+  ExpectCode(
+    "CIVIL3D.PATH_NOT_ALLOWED",
+    () => FileBoundary.WriteAllBytesAtomic(Path.Combine(outsideRoot, "view.png"), pngBytes, overwrite: false, ".png"));
+  FileBoundary.WriteAllBytesAtomic(imagePath, [1, 2, 3], overwrite: true, ".png");
+  Assert(File.ReadAllBytes(writtenImage).SequenceEqual(new byte[] { 1, 2, 3 }), "Explicit binary overwrite did not replace content.");
+
   var importPath = Path.Combine(allowedRoot, "terrain.dem");
   File.WriteAllText(importPath, "dem-data");
   Assert(FileBoundary.ResolveImportPath(importPath, ".dem") == Path.GetFullPath(importPath), "Allowed import was rejected.");

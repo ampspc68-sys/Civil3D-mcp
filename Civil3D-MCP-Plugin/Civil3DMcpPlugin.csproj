@@ -24,6 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- System.Drawing for civil3d_capture_view (Document.CapturePreviewImage and
+         GraphicsSystem View.GetSnapshot return System.Drawing images). Civil 3D
+         already runs on the Windows Desktop runtime, so nothing extra is deployed.
+         A FrameworkReference (not UseWindowsForms) adds no implicit global usings. -->
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="accoremgd">
       <HintPath>$(Civil3DReferencesPath)\accoremgd.dll</HintPath>
       <Private>False</Private>

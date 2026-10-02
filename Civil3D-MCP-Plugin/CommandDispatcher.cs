@@ -38,6 +38,7 @@ public static class CommandDispatcher
       "createMText" => AcadCommands.CreateMTextAsync(parameters),
       "createLineSegment" => AcadCommands.CreateLineSegmentAsync(parameters),
       "executeCode" => CodeExecutionCommands.ExecuteCodeAsync(parameters),
+      "captureView" => ViewCaptureCommands.CaptureViewAsync(parameters),
       "listCivilObjectTypes" => DrawingCommands.ListCivilObjectTypesAsync(),
       "getSelectedCivilObjectsInfo" => DrawingCommands.GetSelectedCivilObjectsInfoAsync(parameters),
       "getJobStatus" => Task.FromResult<object?>(JobCommands.GetJobStatus(parameters)),
