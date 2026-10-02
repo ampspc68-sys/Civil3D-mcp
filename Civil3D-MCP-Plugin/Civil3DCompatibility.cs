@@ -402,4 +402,40 @@ internal static class Civil3DCompatibility
 
     return false;
   }
+
+  /// <summary>
+  /// Returns the simple name and file location of every non-dynamic assembly
+  /// loaded in the host process that has a file on disk. execute_code uses this
+  /// to build Roslyn metadata references for the live AutoCAD/Civil 3D API.
+  /// </summary>
+  public static IReadOnlyList<KeyValuePair<string, string>> GetLoadedAssemblyFiles()
+  {
+    var files = new List<KeyValuePair<string, string>>();
+    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+    {
+      if (assembly.IsDynamic)
+      {
+        continue;
+      }
+
+      string location;
+      string? name;
+      try
+      {
+        location = assembly.Location;
+        name = assembly.GetName().Name;
+      }
+      catch
+      {
+        continue;
+      }
+
+      if (!string.IsNullOrWhiteSpace(location) && !string.IsNullOrWhiteSpace(name))
+      {
+        files.Add(new KeyValuePair<string, string>(name, location));
+      }
+    }
+
+    return files;
+  }
 }

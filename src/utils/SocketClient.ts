@@ -6,6 +6,11 @@ const log = createLogger("SocketClient");
 const COMMAND_TIMEOUT_MS = parseInt(process.env.CIVIL3D_COMMAND_TIMEOUT ?? "120000", 10);
 const MAX_RESPONSE_BYTES = parseInt(process.env.CIVIL3D_MAX_RESPONSE_BYTES ?? "8388608", 10);
 
+export interface CommandOptions {
+  /** Transport timeout for this command in milliseconds. */
+  timeoutMs?: number;
+}
+
 interface PendingRequest {
   resolve: (response: string) => void;
   reject: (error: Error) => void;
@@ -137,7 +142,9 @@ export class ApplicationClientConnection {
     }
   }
 
-  public sendCommand(command: string, params: any = {}): Promise<any> {
+  public sendCommand(command: string, params: any = {}, options: CommandOptions = {}): Promise<any> {
+    // A per-command timeout may extend, never shorten, the configured default.
+    const timeoutMs = Math.max(COMMAND_TIMEOUT_MS, options.timeoutMs ?? 0);
     return new Promise((resolve, reject) => {
       if (!this.isConnected && !this.connect()) {
         reject(new Error(`Failed to connect to Civil 3D plugin at ${this.host}:${this.port}.`));
@@ -157,10 +164,10 @@ export class ApplicationClientConnection {
         const pending = this.responseCallbacks.get(requestId);
         if (pending) {
           this.responseCallbacks.delete(requestId);
-          log.warn("Command timed out", { method: command, requestId, timeoutMs: COMMAND_TIMEOUT_MS });
-          pending.reject(new Error(`Command timed out after ${COMMAND_TIMEOUT_MS}ms: ${command}`));
+          log.warn("Command timed out", { method: command, requestId, timeoutMs });
+          pending.reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
         }
-      }, COMMAND_TIMEOUT_MS);
+      }, timeoutMs);
 
       this.responseCallbacks.set(requestId, {
         timeout,

@@ -16,6 +16,14 @@
   </Target>
 
   <ItemGroup>
+    <!-- Roslyn scripting for civil3d_execute_code. 4.11.x targets net8.0 and only
+         needs System.Collections.Immutable / System.Reflection.Metadata 8.0, which
+         the .NET 8 runtime hosting Civil 3D 2026 already provides. EnableDynamicLoading
+         copies the Microsoft.CodeAnalysis*.dll files to the output for the bundle. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="accoremgd">
       <HintPath>$(Civil3DReferencesPath)\accoremgd.dll</HintPath>
       <Private>False</Private>

@@ -37,6 +37,7 @@ import { JOB_DOMAIN_DEFINITION } from "./domains/jobDomain.js";
 import { PLUGIN_DOMAIN_DEFINITION } from "./domains/pluginDomain.js";
 import { DOCS_DOMAIN_DEFINITION } from "./domains/docsDomain.js";
 import { WORKFLOW_DOMAIN_DEFINITION } from "./domains/workflowDomain.js";
+import { CODE_DOMAIN_DEFINITION } from "./domains/codeDomain.js";
 import type { ToolCatalogEntry } from "./toolMetadata.js";
 
 export const MIGRATED_DOMAIN_DEFINITIONS = [
@@ -69,6 +70,7 @@ export const MIGRATED_DOMAIN_DEFINITIONS = [
   JOB_DOMAIN_DEFINITION,
   WORKFLOW_DOMAIN_DEFINITION,
   PLUGIN_DOMAIN_DEFINITION,
+  CODE_DOMAIN_DEFINITION,
   DOCS_DOMAIN_DEFINITION,
 ];
 

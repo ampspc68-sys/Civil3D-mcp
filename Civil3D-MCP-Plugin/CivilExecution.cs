@@ -20,17 +20,7 @@ public static class CivilExecution
       {
         try
         {
-          var doc = App.DocumentManager.MdiActiveDocument ?? throw new JsonRpcDispatchException("CIVIL3D.NO_DRAWING", "No active drawing is open in Civil 3D.");
-          var expectedDrawingIdentity = PluginRuntime.GetExpectedDrawingIdentity();
-          var activeDrawingIdentity = PluginRuntime.GetDrawingIdentity(doc);
-          if (!string.IsNullOrWhiteSpace(expectedDrawingIdentity) &&
-              !string.Equals(expectedDrawingIdentity, activeDrawingIdentity, StringComparison.OrdinalIgnoreCase))
-          {
-            throw new JsonRpcDispatchException(
-              "CIVIL3D.CONFLICT",
-              $"The active drawing changed from '{expectedDrawingIdentity}' to '{activeDrawingIdentity}' while the operation was queued. No drawing changes were made.");
-          }
-          var civilDoc = CivilApplication.ActiveDocument ?? throw new JsonRpcDispatchException("CIVIL3D.NO_DRAWING", "No active Civil 3D document is available.");
+          var (doc, civilDoc) = ResolveActiveDocuments();
           var database = doc.Database;
 
           using var documentLock = doc.LockDocument();
@@ -57,6 +47,24 @@ public static class CivilExecution
       }
 
       return result!;
+    });
+  }
+
+  /// <summary>
+  /// Runs an asynchronous action inside the active document's lock and a single
+  /// transaction. The action decides whether to commit; any transaction that is
+  /// not committed when the action returns or throws is aborted on dispose.
+  /// </summary>
+  public static Task<T> ExecuteInTransactionAsync<T>(Func<Document, CivilDocument, Database, Transaction, Task<T>> action)
+  {
+    return ExecuteInCommandContextAsync(async () =>
+    {
+      var (doc, civilDoc) = ResolveActiveDocuments();
+      var database = doc.Database;
+
+      using var documentLock = doc.LockDocument();
+      using var transaction = database.TransactionManager.StartTransaction();
+      return await action(doc, civilDoc, database, transaction);
     });
   }
 
@@ -96,6 +104,22 @@ public static class CivilExecution
   public static Task<T> WriteAsync<T>(Func<Document, CivilDocument, Database, Transaction, T> action)
   {
     return ExecuteAsync(action, true);
+  }
+
+  private static (Document Doc, CivilDocument CivilDoc) ResolveActiveDocuments()
+  {
+    var doc = App.DocumentManager.MdiActiveDocument ?? throw new JsonRpcDispatchException("CIVIL3D.NO_DRAWING", "No active drawing is open in Civil 3D.");
+    var expectedDrawingIdentity = PluginRuntime.GetExpectedDrawingIdentity();
+    var activeDrawingIdentity = PluginRuntime.GetDrawingIdentity(doc);
+    if (!string.IsNullOrWhiteSpace(expectedDrawingIdentity) &&
+        !string.Equals(expectedDrawingIdentity, activeDrawingIdentity, StringComparison.OrdinalIgnoreCase))
+    {
+      throw new JsonRpcDispatchException(
+        "CIVIL3D.CONFLICT",
+        $"The active drawing changed from '{expectedDrawingIdentity}' to '{activeDrawingIdentity}' while the operation was queued. No drawing changes were made.");
+    }
+    var civilDoc = CivilApplication.ActiveDocument ?? throw new JsonRpcDispatchException("CIVIL3D.NO_DRAWING", "No active Civil 3D document is available.");
+    return (doc, civilDoc);
   }
 
   private static async Task<T> ExecuteSerializedAsync<T>(Func<Task<T>> action)
