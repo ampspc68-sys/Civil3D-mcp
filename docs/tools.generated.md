@@ -2,8 +2,8 @@
 
 Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 
-- Catalog entries: 208
-- Domains: 30
+- Catalog entries: 210
+- Domains: 31
 
 | Tool | Domain | Operations | Plugin methods | Safe retry |
 |---|---|---|---|---|
@@ -75,6 +75,8 @@ Generated from the runtime manifest for civil3d-mcp 1.2.1. Do not edit by hand.
 | `civil3d_grading_group_volume` | grading | — | getGradingGroupVolume | yes |
 | `civil3d_grading_list` | grading | — | listGradings | yes |
 | `civil3d_help` | help | search, search_videos, get_topic, status, reindex | — | yes |
+| `civil3d_launch` | host | — | — | yes |
+| `civil3d_list_installations` | host | — | — | yes |
 | `civil3d_catchment` | hydrology | list_catchment_groups, get_catchment_group, list_catchments, get_catchment_properties, set_catchment_properties, copy_catchment_to_group, get_catchment_flow_path, get_catchment_boundary | listCatchmentGroups, getCatchmentGroup, listCatchments, getCatchmentProperties, setCatchmentProperties, copyCatchmentToGroup, getCatchmentFlowPath, getCatchmentBoundary | no |
 | `civil3d_hydrology` | hydrology | list_capabilities, trace_flow_path, find_low_point, estimate_runoff, delineate_watershed, calculate_catchment_area, list_catchment_groups, get_catchment_group, list_catchments, get_catchment_properties, set_catchment_properties, copy_catchment_to_group, get_catchment_flow_path, get_catchment_boundary, list_tc_methods, calculate_tc, generate_hydrograph, list_ssa_capabilities, export_stm, import_stm, open_storm_sanitary_analysis, watershed_runoff_workflow, runoff_detention_workflow, runoff_pipe_workflow | listHydrologyCapabilities, traceHydrologyFlowPath, findHydrologyLowPoint, estimateHydrologyRunoff, delineateWatershed, calculateCatchmentArea, listCatchmentGroups, getCatchmentGroup, listCatchments, getCatchmentProperties, setCatchmentProperties, copyCatchmentToGroup, getCatchmentFlowPath, getCatchmentBoundary, listTcMethods, calculateTimeOfConcentration, generateHydrograph, listSsaCapabilities, exportStm, importStm, openStormSanitaryAnalysis, watershedRunoffWorkflow, runoffDetentionWorkflow, runoffPipeWorkflow | no |
 | `civil3d_hydrology_runoff_detention_workflow` | hydrology | — | runoffDetentionWorkflow | yes |
