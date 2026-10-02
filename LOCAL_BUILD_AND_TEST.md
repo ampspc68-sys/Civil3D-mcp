@@ -10,8 +10,9 @@ engine and `FileBoundary`) are covered by automated tests. **The plugin itself
 can only be compiled and exercised on a machine with licensed Civil 3D 2026
 assemblies**, so run every step below before merging.
 
-> The plugin targets `net8.0-windows` (Civil 3D 2026 runs on .NET 8). Any .NET 8
-> or newer SDK can build it; do not change `TargetFramework`.
+> The plugin targets `net10.0-windows`, matching the .NET 10 Civil 3D 2026
+> reference assemblies (a `net8.0-windows` build fails with a System.Runtime
+> 8.0.0.0 / 10.0.0.0 conflict). Build it with the .NET 10 SDK.
 
 All commands are PowerShell, run from the repository root.
 
@@ -39,11 +40,11 @@ Get-ChildItem $refs
 dotnet build .\Civil3D-MCP-Plugin\Civil3DMcpPlugin.csproj -c Release -p:Civil3DReferencesPath="$refs"
 ```
 
-Output: `Civil3D-MCP-Plugin\bin\Release\net8.0-windows\`. Check that the Roslyn
+Output: `Civil3D-MCP-Plugin\bin\Release\net10.0-windows\`. Check that the Roslyn
 assemblies were copied next to the plugin:
 
 ```powershell
-$out = ".\Civil3D-MCP-Plugin\bin\Release\net8.0-windows"
+$out = ".\Civil3D-MCP-Plugin\bin\Release\net10.0-windows"
 Get-ChildItem $out -Filter *.dll | Select-Object Name
 # Expect: Civil3DMcpPlugin.dll, Microsoft.CodeAnalysis.dll, Microsoft.CodeAnalysis.CSharp.dll,
 #         Microsoft.CodeAnalysis.Scripting.dll, Microsoft.CodeAnalysis.CSharp.Scripting.dll
@@ -83,7 +84,7 @@ pointing at `./Contents/2026/Civil3DMcpPlugin.dll`. The four
 `Microsoft.CodeAnalysis*.dll` files only have to be in the same folder, because
 .NET resolves an assembly's dependencies from the folder it was loaded from.
 `System.Collections.Immutable` and `System.Reflection.Metadata` 8.0 come with
-the .NET 8 runtime that Civil 3D uses, and `System.Drawing` comes with the
+the .NET 10 runtime that Civil 3D uses, and `System.Drawing` comes with the
 Windows Desktop runtime that it already loads, so neither is deployed. Check
 with:
 
