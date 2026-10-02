@@ -66,7 +66,7 @@ describe("civil3d_execute_code schema", () => {
   });
 
   it("documents globals, return semantics, transaction behaviour, and examples", () => {
-    for (const fragment of ["Doc", "Db", "Ed", "CivilDoc", "Tr", "Log(string)", "return x;", "ONE transaction", "mode='read'", "SECURITY", "PointStyles.Add", "SetElevationData"]) {
+    for (const fragment of ["Doc", "Db", "Ed", "CivilDoc", "Tr", "Log(string)", "return x;", "ONE transaction", "mode='read'", "SECURITY", "PointStyles.Add", "SetElevationData", "0.0125 = 12.5 mm", "-0.02 = -2 %", "CopyAsSibling(newName)", "CIVIL3D.HOST_BUSY"]) {
       expect(exposure.description).toContain(fragment);
     }
   });

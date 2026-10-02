@@ -302,6 +302,13 @@ the full AutoCAD and Civil 3D .NET API.
   "code": "return CivilDoc.GetSurfaceIds().Cast<ObjectId>().Select(id => ((Surface)Tr.GetObject(id, OpenMode.ForRead)).Name).ToList();" } }
 ```
 
+**Unit gotchas** (verified in Civil 3D 2026 Metric):
+
+- Profile view band `Gap` is in drawing units (metres in a metric drawing):
+  `0.0125` = 12.5 mm, while `12.5` would be 12,500 mm.
+- The `BasicLane` subassembly `Slope` parameter is a ratio: `-0.02` = −2 %.
+- Copy a style with `StyleBase.CopyAsSibling(newName)`.
+
 For `mode: "write"`, first call `civil3d_request_approval` with
 `toolName: "civil3d_execute_code"`, `action: "write"`, and the identical
 parameters; the token is bound to the exact code.
