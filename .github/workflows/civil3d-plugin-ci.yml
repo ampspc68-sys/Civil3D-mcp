@@ -10,6 +10,13 @@ on:
 
 jobs:
   plugin:
+    # Needs a self-hosted Windows runner with licensed Civil 3D 2026 references
+    # (labels: self-hosted, Windows, Civil3D-2026). Without one, the job would
+    # stay queued forever, so it only runs when the repository variable
+    # CIVIL3D_SELF_HOSTED_RUNNER is 'true' (Settings > Secrets and variables >
+    # Actions > Variables). Otherwise it is skipped and does not block CI; build
+    # and test the plugin locally with LOCAL_BUILD_AND_TEST.md.
+    if: ${{ vars.CIVIL3D_SELF_HOSTED_RUNNER == 'true' }}
     runs-on: [self-hosted, Windows, Civil3D-2026]
     steps:
       - uses: actions/checkout@v4

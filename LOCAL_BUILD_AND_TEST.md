@@ -16,6 +16,11 @@ assemblies**, so run every step below before merging.
 
 All commands are PowerShell, run from the repository root.
 
+> CI note: the `Civil 3D 2026 plugin CI` workflow only runs when the repository
+> variable `CIVIL3D_SELF_HOSTED_RUNNER` is `true` and a self-hosted runner
+> labelled `self-hosted, Windows, Civil3D-2026` exists. Otherwise it is skipped,
+> so these local steps are the plugin's build and test gate.
+
 ---
 
 ## 1. Put the Civil 3D 2026 managed DLLs in `C_References\`
